@@ -126,7 +126,7 @@ void receiveFiles()
 			while(remain > 0)
 			{
 				writeln(remain, " bytes left");
-				if (remain < 4096) buf = new ubyte[remain];
+				if (remain < 4096) buf = new ubyte[cast(uint)(remain)];
 				remain -= stream.read(buf);
 				f.rawWrite(buf);
 			}
