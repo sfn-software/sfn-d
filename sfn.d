@@ -126,7 +126,7 @@ void receiveFiles()
 			ulong readc;
 			while(remain > 0)
 			{
-				writeln(remain, " bytes left");
+				//writeln(remain, " bytes left");
 				if (remain < 4096) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
@@ -157,11 +157,13 @@ void sendFiles()
 			File f = File(s, "r");
 			version(Windows)
 			{
-				stream.writeLine(f.name.split("\\")[$-1]);
+				stream.writeString(f.name.split("\\")[$-1]);
+				stream.writeString("\n");
 			}
 			else
 			{
-				stream.writeLine(f.name.split("/")[$-1]);
+				stream.writeString(f.name.split("/")[$-1]);
+				stream.writeString("\n");
 			}
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
