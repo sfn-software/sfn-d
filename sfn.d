@@ -36,7 +36,7 @@ __gshared Socket listener = null;
 __gshared Socket socket = null;
 __gshared string[] send;
 
-immutable uint windowSize = 1024*16;
+immutable uint windowSize = 1024*64;
 
 void main(string[] args)
 {
