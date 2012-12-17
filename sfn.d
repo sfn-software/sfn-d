@@ -36,6 +36,8 @@ __gshared Socket listener = null;
 __gshared Socket socket = null;
 __gshared string[] send;
 
+immutable uint windowSize = 1024*16;
+
 void main(string[] args)
 {
 	bool server = false;
@@ -121,13 +123,13 @@ void receiveFiles()
 
 			File f = File(filename, "w");
 			
-			ubyte[] buf = new ubyte[4096];
+			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
 			while(remain > 0)
 			{
 				write(remain, " bytes left\r");
-				if (remain < 4096) buf = new ubyte[cast(uint)(remain)];
+				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
 				f.rawWrite(buf[0..cast(uint)(readc)]);
@@ -169,7 +171,7 @@ void sendFiles()
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
 			ulong sent = 0;
-			foreach (ubyte[] b; f.byChunk(4096))
+			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
 				stream.write(b);
 				sent += b.length;
