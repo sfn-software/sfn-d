@@ -130,7 +130,7 @@ void receiveFiles()
 				if (remain < 4096) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
-				f.rawWrite(buf[0..readc]);
+				f.rawWrite(buf[0..cast(uint)(readc)]);
 			}
 			writeln("Done.");
 			f.close();
