@@ -126,12 +126,13 @@ void receiveFiles()
 			ulong readc;
 			while(remain > 0)
 			{
-				//writeln(remain, " bytes left");
+				write(remain, " bytes left\r");
 				if (remain < 4096) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
 				f.rawWrite(buf[0..cast(uint)(readc)]);
 			}
+			writeln();
 			writeln("Done.");
 			f.close();
 		}
@@ -167,10 +168,15 @@ void sendFiles()
 			}
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
+			ulong sent = 0;
 			foreach (ubyte[] b; f.byChunk(4096))
 			{
 				stream.write(b);
+				sent += b.length;
+				write(sent, " bytes sent\r");
 			}
+			writeln();
+			writeln("Done.");
 			f.close();
 		}
 		else
