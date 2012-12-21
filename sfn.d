@@ -52,8 +52,8 @@ void main(string[] args)
 		"listen|l|s", &server,
 		"connect|c", &connect,
 		"port|p", &port,
-		"send-file|f", &send,
 	);
+	send = args[1..$];
 
 	if (help) { usage(true); return; }
 	if (ver) { writeln("sfn 1.0"); return; }
@@ -198,14 +198,17 @@ void usage(bool desc = false, string error = null)
 	if (desc) write("sfn - send files over network. ");
 	write("Usage:
 
-    sfn --listen [options]
-    sfn --connect <address> [options]
+    sfn --listen [options] [files to send]
+    sfn --connect <address> [options] [files to send]
+
+sfn will establish a connection, send all the files, receive all the files from another side and then exit.
 
 Options:
 
     --version, -v     Show sfn version and exit.
     --help, -h        Show this text and exit.
     --port, -p        Use specified port. Defaults to 3214.
-    --send-file, -f   Send specified files after connection. Use \"-f file1 -f file2\" to send multiple files.
+
 ");
+
 }
