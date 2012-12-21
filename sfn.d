@@ -126,9 +126,15 @@ void receiveFiles()
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
+			ulong sentBars;
 			while(remain > 0)
 			{
-				write(remain, " bytes left\r");
+				sentBars = (size-remain)*21/size;
+				write("[");
+				for (int i=0; i<20; i++) write(i<sentBars ? "#" : "-");
+				write("] ");
+				write(remain, " bytes left \r");
+				
 				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
