@@ -107,9 +107,11 @@ void main(string[] args)
 
 void showBar(ulong progress, ulong total)
 {
-	ulong sentBars = progress*21/total;
+	uint terminalWidth = 80;
+	uint barsCount = 80-1-2-20-1-20;
+	ulong bars = progress*(barsCount+1)/total;
 	write("[");
-	for (int i=0; i<20; i++) write(i<sentBars ? "#" : "-");
+	for (int i=0; i<barsCount; i++) write(i<bars ? "#" : "-");
 	write("] ");
 	write(progress, "/", total, "\r");
 }
@@ -146,12 +148,11 @@ void receiveFiles()
 			ulong readc;
 			while(remain > 0)
 			{
-				showBar(size-remain, size);
-				
 				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
 				f.rawWrite(buf[0..cast(uint)(readc)]);
+				showBar(size-remain, size);
 			}
 			writeln();
 			writeln("Done.");
@@ -195,7 +196,6 @@ void sendFiles()
 			{
 				stream.write(b);
 				sent += b.length;
-				//write(sent, " bytes sent\r");
 				showBar(sent, size);
 			}
 			writeln();
