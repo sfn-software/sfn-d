@@ -105,6 +105,15 @@ void main(string[] args)
 	return;
 }
 
+void showBar(ulong progress, ulong total)
+{
+	ulong sentBars = progress*21/total;
+	write("[");
+	for (int i=0; i<20; i++) write(i<sentBars ? "#" : "-");
+	write("] ");
+	write(progress, "/", total, "\r");
+}
+
 void receiveFiles()
 {
 	immutable ubyte FILE = 0x01;
@@ -135,14 +144,9 @@ void receiveFiles()
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
-			ulong sentBars;
 			while(remain > 0)
 			{
-				sentBars = (size-remain)*21/size;
-				write("[");
-				for (int i=0; i<20; i++) write(i<sentBars ? "#" : "-");
-				write("] ");
-				write(remain, " bytes left \r");
+				showBar(size-remain, size);
 				
 				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
@@ -185,12 +189,14 @@ void sendFiles()
 			}
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
+			ulong size = f.size();
 			ulong sent = 0;
 			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
 				stream.write(b);
 				sent += b.length;
-				write(sent, " bytes sent\r");
+				//write(sent, " bytes sent\r");
+				showBar(sent, size);
 			}
 			writeln();
 			writeln("Done.");
