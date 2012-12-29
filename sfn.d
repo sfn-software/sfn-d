@@ -35,6 +35,7 @@ __gshared SocketStream stream = null;
 __gshared Socket listener = null;
 __gshared Socket socket = null;
 __gshared string[] send;
+__gshared string prefix = "";
 
 immutable uint windowSize = 1024*64;
 
@@ -52,6 +53,7 @@ void main(string[] args)
 		"listen|l|s", &server,
 		"connect|c", &connect,
 		"port|p", &port,
+		"prefix|f", &prefix,
 	);
 	send = args[1..$];
 
@@ -121,7 +123,7 @@ void receiveFiles()
 			stream.read(size);
 			writeln(size, " bytes");
 
-			File f = File(filename, "w");
+			File f = File(prefix ~ filename, "w");
 			
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
@@ -214,6 +216,7 @@ Options:
     --version, -v     Show sfn version and exit.
     --help, -h        Show this text and exit.
     --port, -p        Use specified port. Defaults to 3214.
+    --prefix, -f      Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
 
 ");
 
