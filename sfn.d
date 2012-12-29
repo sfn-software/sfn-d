@@ -60,7 +60,7 @@ void main(string[] args)
 	send = args[1..$];
 
 	if (help) { usage(true); return; }
-	if (ver) { writeln("sfn 1.0"); return; }
+	if (ver) { writeln("sfn 1.1"); return; }
 
 	if ((connect is null) && !server) { usage(false, "You must specify mode."); return; }
 	if ((connect !is null) && server) { usage(false, "You must specify only one mode."); return; }
