@@ -46,6 +46,7 @@ void main(string[] args)
 	ushort port = 3214;
 	bool help = false;
 	bool ver = false;
+	bool noExtIP = false;
 
 	getopt(args,
 		"version|v", &ver,
@@ -54,6 +55,7 @@ void main(string[] args)
 		"connect|c", &connect,
 		"port|p", &port,
 		"prefix|f", &prefix,
+		"no-external-ip|n", &noExtIP,
 	);
 	send = args[1..$];
 
@@ -70,6 +72,11 @@ void main(string[] args)
 		listener.bind(new InternetAddress(port));
 		listener.listen(10);
 		writeln("Waiting for connection...");
+		if (!noExtIP)
+		{
+			Thread ext = new Thread( &extIP );
+			ext.start();
+		}
 		socket = listener.accept();
 		writeln("Connected: " ~ to!string(socket.remoteAddress()));
 		stream = new SocketStream(socket);
@@ -200,6 +207,43 @@ void sendFiles()
 	writeln("Local done.");
 }
 
+void extIP()
+{
+	// URL: http://tomclaw.com/services/simple/getip.php
+	
+	Socket sock = new TcpSocket(new InternetAddress("tomclaw.com", 80));
+	scope(exit) sock.close();
+	SocketStream ss = new SocketStream(sock);
+
+	ss.writeString(
+		"GET /services/simple/getip.php HTTP/1.0\r\n"
+		"Host: tomclaw.com\r\n"
+		"\r\n"
+	);
+
+	// headers
+	while(true)
+	{
+        auto line = ss.readLine();
+        if (line.length==0) break;
+    }
+
+	// IP
+	auto ip = ss.readLine();
+	writeln("External IP: ", ip);
+	// reverse DNS lookup
+	InternetHost ih = new InternetHost();
+	if (ih.getHostByAddr(ip))
+	{
+		writeln("Host: ", ih.name);
+		foreach (string s; ih.aliases) writeln("Alias: ", s); 
+	}
+	else
+	{
+		writeln("Host: ", "can't determine");
+	}
+}
+
 void usage(bool desc = false, string error = null)
 {
 	if (error !is null) writeln(error);
@@ -211,12 +255,15 @@ void usage(bool desc = false, string error = null)
 
 sfn will establish a connection, send all the files, receive all the files from another side and then exit.
 
+-l and -s are aliases for --listen, -c is an alias for --connect.
+
 Options:
 
-    --version, -v     Show sfn version and exit.
-    --help, -h        Show this text and exit.
-    --port, -p        Use specified port. Defaults to 3214.
-    --prefix, -f      Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
+    --version, -v         Show sfn version and exit.
+    --help, -h            Show this text and exit.
+    --port, -p            Use specified port. Defaults to 3214.
+    --prefix, -f          Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
+    --no-external-ip, -n  Don't perform external IP detection and reverse DNS lookup.
 
 ");
 
