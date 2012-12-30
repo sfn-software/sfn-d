@@ -13,7 +13,7 @@ Requirements:
 * D compiler (dmd is recommended, gdc is officially supported too)
 * make
 
-If you already have all this, just type `make` (`make dmd`, `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `make DESTDIR=/some/folder install` allows to install it not relative to root (useful when builing a package).
+If you already have all this, just type `make` (`make dmd`, `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
 Help
 ----
