@@ -36,3 +36,8 @@ Options:
 * `--port`, `-p`: Use specified port. Defaults to 3214.
 * `--prefix`, `-f`: Add prefix to received files' path and name. For example: `/home/user/downloads/`, `sfn-`, `/etc/file-`.
 * `--no-external-ip`, `-n`: Don't perform external IP detection and reverse DNS lookup.
+
+Related projects
+----------------
+
+* [siphon](https://github.com/solkin/siphon) &mdash; a compatible C implementation
