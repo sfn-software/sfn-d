@@ -27,6 +27,7 @@ import std.socketstream;
 import std.getopt;
 import std.conv;
 import std.string;
+import std.path;
 import core.thread;
 import std.compiler;
 
@@ -179,16 +180,8 @@ void sendFiles()
 		{
 			stream.write(FILE);
 			File f = File(s, "r");
-			version(Windows)
-			{
-				stream.writeString(f.name.split("\\")[$-1]);
-				stream.writeString("\n");
-			}
-			else
-			{
-				stream.writeString(f.name.split("/")[$-1]);
-				stream.writeString("\n");
-			}
+			stream.writeString(f.name.split(dirSeparator)[$-1]);
+			stream.writeString("\n");
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
 			ulong size = f.size();
