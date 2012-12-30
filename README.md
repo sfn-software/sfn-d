@@ -1,7 +1,19 @@
 sfn
 ===
 
-Send files over network
+A small and fast utility to send files over network.
+
+Building and running
+--------------------
+
+Note: if you're running Arch Linux, you can just install package `sfn`, we keep it pretty fresh.
+
+Requirements:
+
+* D compiler (dmd is recommended, gdc is officially supported too)
+* make
+
+If you already have all this, just type `make` (`make dmd`, `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `make DESTDIR=/some/folder install` allows to install it not relative to root (useful when builing a package).
 
 Help
 ----
