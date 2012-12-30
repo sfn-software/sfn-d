@@ -28,6 +28,7 @@ import std.getopt;
 import std.conv;
 import std.string;
 import core.thread;
+import std.compiler;
 
 __gshared bool localDone = false;
 __gshared bool remoteDone = false;
@@ -60,7 +61,7 @@ void main(string[] args)
 	send = args[1..$];
 
 	if (help) { usage(true); return; }
-	if (ver) { writeln("sfn 1.1"); return; }
+	if (ver) { writeln("sfn 1.1" ~ "\nCompiled by: " ~ std.compiler.name); return; }
 
 	if ((connect is null) && !server) { usage(false, "You must specify mode."); return; }
 	if ((connect !is null) && server) { usage(false, "You must specify only one mode."); return; }
