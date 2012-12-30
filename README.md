@@ -3,10 +3,14 @@ sfn
 
 A small and fast utility to send files over network.
 
+Various notes
+-------------
+
+* If you're running Arch Linux, you can just install package `sfn`, we keep it pretty fresh.
+* It won't compile on Ubuntu (Mint, etc.) because libphobos there is too old. Use [dmd](http://dlang.org/download.html).
+
 Building and running
 --------------------
-
-Note: if you're running Arch Linux, you can just install package `sfn`, we keep it pretty fresh.
 
 Requirements:
 
