@@ -230,8 +230,8 @@ void extIP()
 	// headers
 	while(true)
 	{
-        auto line = ss.readLine();
-        if (line.length==0) break;
+		auto line = ss.readLine();
+		if (line.length==0) break;
 	}
 
 	// IP
