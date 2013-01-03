@@ -1,4 +1,4 @@
-sfn
+sfn [![Build Status](https://travis-ci.org/m1kc/sfn.png?branch=master)](https://travis-ci.org/m1kc/sfn)
 ===
 
 A small and fast utility to send files over network.
