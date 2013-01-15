@@ -6,8 +6,8 @@ A small and fast utility to send files over network.
 Various notes
 -------------
 
-* If you're running Arch Linux, you can just install package `sfn`, we keep it pretty fresh.
-* It won't compile on Ubuntu (Mint, etc.) because libphobos there is too old. Use [dmd](http://dlang.org/download.html).
+* If you're running Arch Linux, you can just install package `sfn` from AUR — we keep it pretty fresh.
+* It won't compile with gdc on Ubuntu (Mint, Debian, etc.) because libphobos there is too old. Use [dmd](http://dlang.org/download.html) instead.
 
 Building and running
 --------------------
@@ -17,7 +17,7 @@ Requirements:
 * D compiler (dmd is recommended, gdc is officially supported too)
 * make
 
-If you already have all this, just type `make` (`make dmd`, `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
+If you already have all this, just type `make` (or `make dmd`, or `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
 Help
 ----
