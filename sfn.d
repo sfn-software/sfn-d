@@ -28,6 +28,7 @@ import std.getopt;
 import std.conv;
 import std.string;
 import std.path;
+import std.datetime;
 import core.thread;
 import std.compiler;
 
@@ -107,7 +108,7 @@ void main(string[] args)
 	return;
 }
 
-void showBar(ulong progress, ulong total)
+void showBar(ulong progress, ulong total, long startTime = -1)
 {
 	uint terminalWidth = 80;
 	uint barsCount = 80-1-2-20-1-20;
@@ -186,11 +187,12 @@ void sendFiles()
 			writeln(to!string(f.size()) ~ " bytes");
 			ulong size = f.size();
 			ulong sent = 0;
+			long start = Clock.currStdTime();
 			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
 				stream.write(b);
 				sent += b.length;
-				showBar(sent, size);
+				showBar(sent, size, start);
 			}
 			writeln();
 			writeln("Done.");

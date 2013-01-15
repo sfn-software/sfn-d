@@ -1,0 +1,38 @@
+# Maintainer: m1kc <m1kc@yandex.ru>
+# Author: m1kc <m1kc@yandex.ru>
+
+pkgname=sfn
+pkgver=1.1
+pkgrel=2
+epoch=
+pkgdesc="Utility to send files over network using direct TCP connection"
+arch=('i686' 'x86_64')
+url="https://github.com/m1kc/sfn"
+license=('GPL')
+groups=()
+depends=('glibc')
+makedepends=('dmd' 'libphobos')
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=('sfn.d' 'Makefile')
+noextract=()
+md5sums=('d0017bd4c4ac82206d4fcee6aa601b4e'
+         '20f412df28f097d6fe05330b6dd9fee6')
+
+build() {
+  #  cd "$srcdir/$pkgname-$pkgver"
+  #  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  #  cd "$srcdir/$pkgname-$pkgver"
+  make DESTDIR="$pkgdir" install
+}

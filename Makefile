@@ -7,7 +7,8 @@ gdc:
 	gdc sfn.d -o sfn -O2 -Wall
 	
 install:
-	install -D sfn ${DESTDIR}/usr/bin/sfn
+	install -d ${DESTDIR}/usr/bin/
+	install sfn ${DESTDIR}/usr/bin/
 
 clean:
 	rm -f sfn sfn.o
