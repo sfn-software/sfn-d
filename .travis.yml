@@ -1,10 +1,10 @@
 language: cpp
 script:
+ - ronn -r sfn.1.ronn
  - make dmd
  - ./sfn -v
  #- make gdc
  #- ./sfn -v
- - ronn -r sfn.1.ronn
 before_install:
  - sudo apt-get update -qq
  - wget http://ftp.digitalmars.com/dmd_2.060-0_i386.deb
