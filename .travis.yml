@@ -13,4 +13,4 @@ before_install:
  - sudo apt-get -f install -qq
  #- sudo apt-get install -qq gdc
  - sudo apt-get install -qq ruby
- - sudo gem install ronn
+ - gem install ronn
