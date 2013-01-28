@@ -19,6 +19,8 @@ Requirements:
 
 If you already have all this, just type `make` (or `make dmd`, or `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations are not supported yet). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
+If you need to rebuild the manpage (typically you don't), install ronn and run `make man`.
+
 Help
 ----
 
