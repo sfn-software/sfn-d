@@ -33,6 +33,7 @@ import std.format;
 import std.array;
 import std.digest.md;
 import std.process;
+import std.zlib;
 import core.thread;
 import std.compiler;
 
@@ -44,6 +45,7 @@ __gshared Socket socket = null;
 __gshared string[] send;
 __gshared string prefix = "";
 __gshared bool zenity = false;
+__gshared bool compression = true;
 
 immutable uint windowSize = 1024*64;
 
@@ -203,6 +205,7 @@ void receiveFiles()
 {
 	immutable ubyte FILE = 0x01;
 	immutable ubyte DONE = 0x02;
+	immutable ubyte ZIPPEDFILE = 0x03;
 
 	ubyte b;
 
@@ -215,7 +218,7 @@ void receiveFiles()
 			remoteDone = true;
 			return;
 		}
-		else if (b == FILE)
+		else if (b == FILE || b == ZIPPEDFILE)
 		{
 			write("Receiving a file: ");
 			string filename = to!string(stream.readLine());
@@ -232,13 +235,48 @@ void receiveFiles()
 			ulong remain = size;
 			ulong readc;
 			long time = currentTime();
+			UnCompress uc = new UnCompress();
 			while(remain > 0)
 			{
 				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
-				remain -= readc;
-				f.rawWrite(buf[0..cast(uint)(readc)]);
+				if (b == ZIPPEDFILE)
+				{
+					if (readc > 100)
+					{
+						ubyte[] uncbuf;
+						try
+						{
+							uncbuf = cast(ubyte[])(uc.uncompress(buf[0..readc]));
+							remain -= uncbuf.length;
+							f.rawWrite(uncbuf);
+						}
+						catch(Exception ex)
+						{
+							writeln(ex.toString());
+							writeln("-----");
+							write("Uncbuf Len: ");
+							writeln(uncbuf.length);
+							writeln(to!string(uncbuf));
+							write("Readc: ");
+							writeln(readc);
+							write("Len: ");
+							writeln(buf.length);
+							writeln(to!string(uncbuf));
+							writeln("-----");
+						}
+					}
+				}
+				else
+				{
+					remain -= readc;
+					f.rawWrite(buf[0..cast(uint)(readc)]);
+				}
 				showBar(size-remain, size, time);
+			}
+			if (b == ZIPPEDFILE)
+			{
+				f.rawWrite(uc.flush());
 			}
 			writeln();
 			writeln("Done.");
@@ -269,6 +307,7 @@ void sendFiles()
 {
 	immutable ubyte FILE = 0x01;
 	immutable ubyte DONE = 0x02;
+	immutable ubyte ZIPPEDFILE = 0x03;
 
 	foreach(string s; send)
 	{
@@ -276,7 +315,7 @@ void sendFiles()
 		DirEntry d = dirEntry(s);
 		if (d.isFile())
 		{
-			stream.write(FILE);
+			stream.write(compression ? ZIPPEDFILE : FILE);
 			File f = File(s, "r");
 			stream.writeString(f.name.split(dirSeparator)[$-1]);
 			stream.writeString("\n");
@@ -299,11 +338,23 @@ void sendFiles()
 			ulong size = f.size();
 			ulong sent = 0;
 			long time = currentTime();
+			Compress c = new Compress(HeaderFormat.gzip);
 			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
-				stream.write(b);
+				if (compression)
+				{
+					stream.write(cast(ubyte[])(c.compress(b)));
+				}
+				else
+				{
+					stream.write(b);
+				}
 				sent += b.length;
 				showBar(sent, size, time);
+			}
+			if (compression)
+			{
+				stream.write(cast(ubyte[])(c.flush()));
 			}
 			writeln();
 			writeln("Done.");
