@@ -1,6 +1,6 @@
 language: cpp
 script:
- - ronn -r sfn.1.ronn
+ - make man
  - make dmd
  - ./sfn -v
  #- make gdc
