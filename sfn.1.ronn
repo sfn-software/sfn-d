@@ -14,16 +14,16 @@ sfn is an utility to send files over network using direct TCP connection. After 
 
   * `--version`, `-v`:
     Show version and exit.
-    
+
   * `--help`, `-h`:
     Show help and exit.
-    
+
   * `--port`, `-p`:
     Use specified port. Defaults to 3214.
-    
+
   * `--prefix`, `-f`:
     Add prefix to received files' path and name. For example: `/home/user/downloads/`, `sfn-`, `/etc/file-`.
-    
+
   * `--no-external-ip`, `-n`:
     Don't perform external IP detection and reverse DNS lookup.
 
@@ -32,17 +32,17 @@ sfn is an utility to send files over network using direct TCP connection. After 
 Listen on port 3333, place all received files into current workdir:
 
     $ sfn -s -p 3333
-    
+
 Connect to server `55.66.77.88`, send a file named `numbers.txt` and place received ones into `/tmp/sfn`:
 
     $ sfn -c 55.66.77.88 -f /tmp/sfn/ numbers.txt
-    
+
 Please note that trailing slash in `/tmp/sfn/` is mandatory because it is simply a prefix.
-    
+
 Listen on default port, send some files and don't try to determine our external IP:
 
     $ sfn -s -n for-james-*.txt
-    
+
 Connect to `myserver.dyndns.org`, receive some files, prefix their names with `sfn-received-` and place them into `~/Downloads`:
 
     $ sfn -c myserver.dyndns.org -f ~/Downloads/sfn-received-
