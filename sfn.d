@@ -71,11 +71,11 @@ void main(string[] args)
 	);
 	send = args[1..$];
 
-	if (help) { usage(true); return; }
+	if (help) { usage(); return; }
 	if (ver) { writeln("sfn 1.1" ~ "\nCompiled by: " ~ std.compiler.name); return; }
 
-	if ((connect is null) && !server) { usage(false, "You must specify mode."); return; }
-	if ((connect !is null) && server) { usage(false, "You must specify only one mode."); return; }
+	if ((connect is null) && !server) { usage("You must specify mode."); return; }
+	if ((connect !is null) && server) { usage("You must specify only one mode."); return; }
 
 	if (server)
 	{
@@ -274,10 +274,9 @@ void extIP()
 	}
 }
 
-void usage(bool desc = false, string error = null)
+void usage(string error = null)
 {
-	if (error !is null) writeln(error);
-	if (desc) write("sfn - send files over network. ");
+	if (error !is null) writeln(error); else write("sfn - send files over network. ");
 	write("Usage:
 
     sfn --listen [options] [files to send]
