@@ -1,5 +1,6 @@
 language: cpp
 script:
+ - ronn -r sfn.1.ronn
  - make dmd
  - ./sfn -v
  #- make gdc
@@ -11,3 +12,5 @@ before_install:
  - sudo dpkg -i dmd_2.060-0_i386.deb
  - sudo apt-get -f install -qq
  #- sudo apt-get install -qq gdc
+ - sudo apt-get install -qq ruby
+ - gem install ronn
