@@ -42,8 +42,17 @@ __gshared string prefix = "";
 
 immutable uint windowSize = 1024*64;
 
+//version = TestBarAndExit;
 void main(string[] args)
 {
+	version(TestBarAndExit)
+	{
+		long time = currentTime();
+		int max = int.max/10000;
+		for (int i=0; i<max; i++) showBar(i, max, time);
+		return;
+	}
+
 	bool server = false;
 	string connect = null;
 	ushort port = 3214;
@@ -108,14 +117,31 @@ void main(string[] args)
 	return;
 }
 
+long currentTime()
+{
+	return Clock.currStdTime()/10_000; // hnsecs (hecto-nanoseconds (100 ns)) to millisecs
+}
+
 void showBar(ulong progress, ulong total, long startTime = -1)
 {
-	uint terminalWidth = 80;
-	uint barsCount = 80-1-2-20-1-20;
+	// MUST REFACTOR
+	ulong terminalWidth = 80;
+	ulong barsCount = terminalWidth
+		-3								// [], space
+		-to!string(total).length		// number1
+		-1								// /
+		-to!string(total).length		// number2
+		-1								// space at end of line
+		-30////
+		;
 	ulong bars = progress*(barsCount+1)/total;
 	write("[");
-	for (int i=0; i<barsCount; i++) write(i<bars ? "#" : "-");
+	for (ulong i=0; i<barsCount; i++) write(i<bars ? "#" : "-");
 	write("] ");
+
+	long timeSpent = currentTime()-startTime;
+	if (timeSpent != 0) write(progress*1000/timeSpent, " b/sec "); ////
+
 	write(progress, "/", total, "\r");
 }
 
@@ -149,13 +175,14 @@ void receiveFiles()
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
+			long time = currentTime();
 			while(remain > 0)
 			{
 				if (remain < windowSize) buf = new ubyte[cast(uint)(remain)];
 				readc = stream.read(buf);
 				remain -= readc;
 				f.rawWrite(buf[0..cast(uint)(readc)]);
-				showBar(size-remain, size);
+				showBar(size-remain, size, time);
 			}
 			writeln();
 			writeln("Done.");
@@ -187,12 +214,12 @@ void sendFiles()
 			writeln(to!string(f.size()) ~ " bytes");
 			ulong size = f.size();
 			ulong sent = 0;
-			long start = Clock.currStdTime();
+			long time = currentTime();
 			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
 				stream.write(b);
 				sent += b.length;
-				showBar(sent, size, start);
+				showBar(sent, size, time);
 			}
 			writeln();
 			writeln("Done.");
@@ -233,6 +260,7 @@ void extIP()
 	// IP
 	auto ip = ss.readLine();
 	writeln("External IP: ", ip);
+
 	// reverse DNS lookup
 	InternetHost ih = new InternetHost();
 	if (ih.getHostByAddr(ip))
