@@ -143,6 +143,8 @@ string numberOfBytes(long x)
 	return writer.data;
 }
 
+extern (C) int getTerminalWidth();
+
 void showBar(ulong progress, ulong total, long startTime = -1)
 {
 	string output = " ";
@@ -159,7 +161,7 @@ void showBar(ulong progress, ulong total, long startTime = -1)
 	output ~= numberOfBytes(total);
 	output ~= "\r";
 
-	ulong terminalWidth = 80;
+	ulong terminalWidth = getTerminalWidth();
 	ulong barsCount = terminalWidth
 		-3								// [], space
 		-output.length

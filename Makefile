@@ -1,7 +1,10 @@
-all: dmd
+all: terminal dmd
+
+terminal:
+	gcc terminal.c -shared -c
 
 dmd:
-	dmd sfn.d -ofsfn -O -w -wi
+	dmd sfn.d terminal.o -ofsfn -O -w -wi
 
 gdc:
 	gdc sfn.d -o sfn -O2 -Wall
