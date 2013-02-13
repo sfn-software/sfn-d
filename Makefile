@@ -1,13 +1,13 @@
-all: terminal dmd
+all: dmd
 
 terminal:
 	gcc terminal.c -shared -c
 
-dmd:
+dmd: terminal
 	dmd sfn.d terminal.o -ofsfn -O -w -wi
 
-gdc:
-	gdc sfn.d -o sfn -O2 -Wall
+gdc: terminal
+	gdc sfn.d terminal.o -o sfn -O2 -Wall
 	
 install:
 	install -D sfn ${DESTDIR}/usr/bin/sfn
