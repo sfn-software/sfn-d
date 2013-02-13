@@ -29,6 +29,8 @@ import std.conv;
 import std.string;
 import std.path;
 import std.datetime;
+import std.format;
+import std.array;
 import core.thread;
 import std.compiler;
 
@@ -43,6 +45,7 @@ __gshared string prefix = "";
 immutable uint windowSize = 1024*64;
 
 //version = TestBarAndExit;
+//version = TestNumbersAndExit;
 void main(string[] args)
 {
 	version(TestBarAndExit)
@@ -50,6 +53,13 @@ void main(string[] args)
 		long time = currentTime();
 		int max = int.max/10000;
 		for (int i=0; i<max; i++) showBar(i, max, time);
+		return;
+	}
+	version(TestNumbersAndExit)
+	{
+		int max = int.max;
+		for (int i=0; i<max; i++) std.stdio.write(numberOfBytes(i), "\r");
+		writeln;
 		return;
 	}
 
@@ -122,27 +132,44 @@ long currentTime()
 	return Clock.currStdTime()/10_000; // hnsecs (hecto-nanoseconds (100 ns)) to millisecs
 }
 
+string numberOfBytes(long x)
+{
+	if (x<1024) return to!string(x) ~ " bytes";
+
+	auto writer = std.array.appender!string();
+	if (x<1024*1024) formattedWrite(writer, "%.1f Kb", cast(double)(x)/1024);
+	else if (x<1024*1024*1024) formattedWrite(writer, "%.1f Mb", cast(double)(x)/(1024*1024));
+	else formattedWrite(writer, "%.1f Gb", cast(double)(x)/(1024*1024*1024));
+	return writer.data;
+}
+
 void showBar(ulong progress, ulong total, long startTime = -1)
 {
-	// MUST REFACTOR
+	string output = " ";
+
+	long timeSpent = currentTime()-startTime;
+	if (timeSpent != 0)
+	{
+		output ~= numberOfBytes(progress*1000/timeSpent);
+		output ~= "/sec  ";
+	}
+
+	output ~= numberOfBytes(progress);
+	output ~= "/";
+	output ~= numberOfBytes(total);
+	output ~= "\r";
+
 	ulong terminalWidth = 80;
 	ulong barsCount = terminalWidth
 		-3								// [], space
-		-to!string(total).length		// number1
-		-1								// /
-		-to!string(total).length		// number2
-		-1								// space at end of line
-		-30////
+		-output.length
 		;
 	ulong bars = progress*(barsCount+1)/total;
 	write("[");
 	for (ulong i=0; i<barsCount; i++) write(i<bars ? "#" : "-");
 	write("] ");
 
-	long timeSpent = currentTime()-startTime;
-	if (timeSpent != 0) write(progress*1000/timeSpent, " b/sec "); ////
-
-	write(progress, "/", total, "\r");
+	write(output);
 }
 
 void receiveFiles()
@@ -151,7 +178,7 @@ void receiveFiles()
 	immutable ubyte DONE = 0x02;
 
 	ubyte b;
-	
+
 	while(true)
 	{
 		stream.read(b);
@@ -171,7 +198,7 @@ void receiveFiles()
 			writeln(size, " bytes");
 
 			File f = File(prefix ~ filename, "w");
-			
+
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
@@ -239,7 +266,7 @@ void sendFiles()
 void extIP()
 {
 	// URL: http://tomclaw.com/services/simple/getip.php
-	
+
 	Socket sock = new TcpSocket(new InternetAddress("tomclaw.com", 80));
 	scope(exit) sock.close();
 	SocketStream ss = new SocketStream(sock);
@@ -266,7 +293,7 @@ void extIP()
 	if (ih.getHostByAddr(ip))
 	{
 		writeln("Host: ", ih.name);
-		foreach (string s; ih.aliases) writeln("Alias: ", s); 
+		foreach (string s; ih.aliases) writeln("Alias: ", s);
 	}
 	else
 	{
