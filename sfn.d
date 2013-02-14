@@ -82,7 +82,7 @@ void main(string[] args)
 	send = args[1..$];
 
 	if (help) { usage(); return; }
-	if (ver) { writeln("sfn 1.1" ~ "\nCompiled by: " ~ std.compiler.name); return; }
+	if (ver) { writeln("sfn 1.15" ~ "\nCompiled by: " ~ std.compiler.name); return; }
 
 	if ((connect is null) && !server) { usage("You must specify mode."); return; }
 	if ((connect !is null) && server) { usage("You must specify only one mode."); return; }
