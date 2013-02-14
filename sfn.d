@@ -143,7 +143,18 @@ string numberOfBytes(long x)
 	return writer.data;
 }
 
-extern (C) int getTerminalWidth();
+version(Windows) // issue #17
+{
+	int getTerminalWidth()
+	{
+		return 80;
+	}
+}
+else
+{
+	// C extension (ioctl)
+	extern (C) int getTerminalWidth();
+}
 
 void showBar(ulong progress, ulong total, long startTime = -1)
 {
