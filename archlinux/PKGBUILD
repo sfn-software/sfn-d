@@ -2,7 +2,7 @@
 # Author: m1kc <m1kc@yandex.ru>
 
 pkgname=sfn
-pkgver=1.15
+pkgver=1.16
 pkgrel=1
 epoch=
 pkgdesc="Utility to send files over network using direct TCP connection"
@@ -13,7 +13,7 @@ groups=()
 depends=('glibc')
 makedepends=('dmd' 'libphobos' 'gcc')
 checkdepends=()
-optdepends=()
+optdepends=('zenity: for -z to work')
 provides=()
 conflicts=()
 replaces=()
@@ -23,9 +23,9 @@ install=
 changelog=
 source=('sfn.d' 'Makefile' 'sfn.1' 'terminal.c')
 noextract=()
-md5sums=('95f89611bdbe8c670e42670d66a667be'
+md5sums=('6d79fd1cf219a261e294e3be5d22edab'
          'd248019fc690f68dc979688451ca841a'
-         'bf60c24fabb64786cdd7a0fa67fa0936'
+         '68b07fd8b4ebeed12b12e2924ae0cf76'
          '831d81f22a8e0df8721346d2cd057b64')
 
 build() {

@@ -32,6 +32,7 @@ import std.datetime;
 import std.format;
 import std.array;
 import std.digest.md;
+import std.process;
 import core.thread;
 import std.compiler;
 
@@ -42,6 +43,7 @@ __gshared Socket listener = null;
 __gshared Socket socket = null;
 __gshared string[] send;
 __gshared string prefix = "";
+__gshared bool zenity = false;
 
 immutable uint windowSize = 1024*64;
 
@@ -79,6 +81,7 @@ void main(string[] args)
 		"port|p", &port,
 		"prefix|f", &prefix,
 		"no-external-ip|n", &noExtIP,
+		"zenity|z", &zenity,
 	);
 	send = args[1..$];
 
@@ -87,6 +90,16 @@ void main(string[] args)
 
 	if ((connect is null) && !server) { usage("You must specify mode."); return; }
 	if ((connect !is null) && server) { usage("You must specify only one mode."); return; }
+
+	if (zenity)
+	{
+		string[] names = shell("zenity --file-selection --multiple").chomp().split("|");
+		foreach(string s; names)
+		{
+			writeln("File added: " ~ s);
+		}
+		send ~= names;
+	}
 
 	if (server)
 	{
@@ -364,6 +377,7 @@ Options:
     --port, -p            Use specified port. Defaults to 3214.
     --prefix, -f          Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
     --no-external-ip, -n  Don't perform external IP detection and reverse DNS lookup.
+    --zenity, -z          Call zenity to select files using standard GTK dialog.
 
 ");
 
