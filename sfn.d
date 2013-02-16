@@ -31,6 +31,7 @@ import std.path;
 import std.datetime;
 import std.format;
 import std.array;
+import std.digest.md;
 import core.thread;
 import std.compiler;
 
@@ -209,9 +210,11 @@ void receiveFiles()
 			ulong size;
 			stream.read(size);
 			writeln(size, " bytes");
+			write("md5: ");
+			string md5str = to!string(stream.readLine());
+			writeln(md5str);
 
 			File f = File(prefix ~ filename, "w");
-
 			ubyte[] buf = new ubyte[windowSize];
 			ulong remain = size;
 			ulong readc;
@@ -227,6 +230,20 @@ void receiveFiles()
 			writeln();
 			writeln("Done.");
 			f.close();
+
+			f = File(prefix ~ filename, "r");
+			MD5 md5;
+			md5.start();
+			foreach (ubyte[] b2; f.byChunk(256*1024))
+			{
+				md5.put(b2);
+			}
+			string md5str2 = toHexString(md5.finish());
+			md5str2 = md5str2.toLower();
+			f.close();
+
+			writeln("Checking integrity...");
+			writeln( md5str == md5str2 ? "md5 is OK." : "md5 is invalid, file is probably corrupt." );
 		}
 		else
 		{
@@ -252,6 +269,20 @@ void sendFiles()
 			stream.writeString("\n");
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
+			write("md5: ");
+			MD5 md5;
+			md5.start();
+			foreach (ubyte[] b; f.byChunk(256*1024))
+			{
+				md5.put(b);
+			}
+			string md5str = toHexString(md5.finish());
+			md5str = md5str.toLower();
+			writeln(md5str);
+			stream.writeString(md5str);
+			stream.writeString("\n");
+			f.seek(0);
+
 			ulong size = f.size();
 			ulong sent = 0;
 			long time = currentTime();
