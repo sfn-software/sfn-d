@@ -47,6 +47,10 @@ __gshared bool zenity = false;
 
 immutable uint windowSize = 1024*64;
 
+immutable ubyte FILE = 0x01;
+immutable ubyte DONE = 0x02;
+immutable ubyte FILE_WITH_MD5 = 0x03;
+
 //version = TestBarAndExit;
 //version = TestNumbersAndExit;
 void main(string[] args)
@@ -201,9 +205,6 @@ void showBar(ulong progress, ulong total, long startTime = -1)
 
 void receiveFiles()
 {
-	immutable ubyte FILE = 0x01;
-	immutable ubyte DONE = 0x02;
-
 	ubyte b;
 
 	while(true)
@@ -215,7 +216,7 @@ void receiveFiles()
 			remoteDone = true;
 			return;
 		}
-		else if (b == FILE)
+		else if (b == FILE_WITH_MD5 || b == FILE)
 		{
 			write("Receiving a file: ");
 			string filename = to!string(stream.readLine());
@@ -223,9 +224,13 @@ void receiveFiles()
 			ulong size;
 			stream.read(size);
 			writeln(size, " bytes");
-			write("md5: ");
-			string md5str = to!string(stream.readLine());
-			writeln(md5str);
+			string md5str = null;
+			if (b == FILE_WITH_MD5)
+			{
+				write("md5: ");
+				md5str = to!string(stream.readLine());
+				writeln(md5str);
+			}
 
 			File f = File(prefix ~ filename, "w");
 			ubyte[] buf = new ubyte[windowSize];
@@ -244,19 +249,27 @@ void receiveFiles()
 			writeln("Done.");
 			f.close();
 
-			f = File(prefix ~ filename, "r");
-			MD5 md5;
-			md5.start();
-			foreach (ubyte[] b2; f.byChunk(256*1024))
+			if (b == FILE_WITH_MD5)
 			{
-				md5.put(b2);
-			}
-			string md5str2 = toHexString(md5.finish());
-			md5str2 = md5str2.toLower();
-			f.close();
+				writeln("Checking integrity...");
 
-			writeln("Checking integrity...");
-			writeln( md5str == md5str2 ? "md5 is OK." : "md5 is invalid, file is probably corrupt." );
+				f = File(prefix ~ filename, "r");
+				MD5 md5;
+				md5.start();
+				foreach (ubyte[] b2; f.byChunk(256*1024))
+				{
+					md5.put(b2);
+				}
+				string md5str2 = toHexString(md5.finish());
+				md5str2 = md5str2.toLower();
+				f.close();
+
+				writeln( md5str == md5str2 ? "md5 is OK." : "md5 is invalid, file is probably corrupt." );
+			}
+			else
+			{
+				writeln("Notice: integrity check is impossible, peer uses old version of sfn or have disabled this feature.");
+			}
 		}
 		else
 		{
@@ -267,16 +280,13 @@ void receiveFiles()
 
 void sendFiles()
 {
-	immutable ubyte FILE = 0x01;
-	immutable ubyte DONE = 0x02;
-
 	foreach(string s; send)
 	{
 		writeln("Sending a file: " ~ s);
 		DirEntry d = dirEntry(s);
 		if (d.isFile())
 		{
-			stream.write(FILE);
+			stream.write(FILE_WITH_MD5);
 			File f = File(s, "r");
 			stream.writeString(f.name.split(dirSeparator)[$-1]);
 			stream.writeString("\n");
