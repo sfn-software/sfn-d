@@ -30,6 +30,9 @@ sfn is an utility to send files over network using direct TCP connection. After 
   * `--zenity`, `-z`:
     Call zenity to select files using standard GTK dialog.
 
+  * `--no-integrity-check`, `-e`:
+    Disable integrity check after transfer. This option was added for compatibility with older versions of sfn.
+
 ## EXAMPLES
 
 Listen on port 3333, place all received files into current workdir:

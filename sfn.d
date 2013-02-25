@@ -44,6 +44,7 @@ __gshared Socket socket = null;
 __gshared string[] send;
 __gshared string prefix = "";
 __gshared bool zenity = false;
+__gshared bool disableMD5 = false;
 
 immutable uint windowSize = 1024*64;
 
@@ -86,6 +87,7 @@ void main(string[] args)
 		"prefix|f", &prefix,
 		"no-external-ip|n", &noExtIP,
 		"zenity|z", &zenity,
+		"no-integrity-check|e", &disableMD5,
 	);
 	send = args[1..$];
 
@@ -286,25 +288,32 @@ void sendFiles()
 		DirEntry d = dirEntry(s);
 		if (d.isFile())
 		{
-			stream.write(FILE_WITH_MD5);
+			stream.write( disableMD5 ? FILE : FILE_WITH_MD5 );
 			File f = File(s, "r");
 			stream.writeString(f.name.split(dirSeparator)[$-1]);
 			stream.writeString("\n");
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
-			write("md5: ");
-			MD5 md5;
-			md5.start();
-			foreach (ubyte[] b; f.byChunk(256*1024))
+			if (!disableMD5)
 			{
-				md5.put(b);
+				write("md5: ");
+				MD5 md5;
+				md5.start();
+				foreach (ubyte[] b; f.byChunk(256*1024))
+				{
+					md5.put(b);
+				}
+				string md5str = toHexString(md5.finish());
+				md5str = md5str.toLower();
+				writeln(md5str);
+				stream.writeString(md5str);
+				stream.writeString("\n");
+				f.seek(0);
 			}
-			string md5str = toHexString(md5.finish());
-			md5str = md5str.toLower();
-			writeln(md5str);
-			stream.writeString(md5str);
-			stream.writeString("\n");
-			f.seek(0);
+			else
+			{
+				writeln("Notice: integrity check is disabled.");
+			}
 
 			ulong size = f.size();
 			ulong sent = 0;
@@ -377,17 +386,17 @@ void usage(string error = null)
     sfn --connect <address> [options] [files to send]
 
 sfn will establish a connection, send all the files, receive all the files from another side and then exit.
-
 -l and -s are aliases for --listen, -c is an alias for --connect.
 
 Options:
 
-    --version, -v         Show sfn version and exit.
-    --help, -h            Show this text and exit.
-    --port, -p            Use specified port. Defaults to 3214.
-    --prefix, -f          Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
-    --no-external-ip, -n  Don't perform external IP detection and reverse DNS lookup.
-    --zenity, -z          Call zenity to select files using standard GTK dialog.
+    --version, -v             Show sfn version and exit.
+    --help, -h                Show this text and exit.
+    --port, -p                Use specified port. Defaults to 3214.
+    --prefix, -f              Add prefix to received files' path and name. For example: '/home/user/downloads/', 'sfn-', '/etc/file-'.
+    --no-external-ip, -n      Don't perform external IP detection and reverse DNS lookup.
+    --zenity, -z              Call zenity to select files using standard GTK dialog.
+    --no-integrity-check, -e  Disable integrity check after transfer. For compatibility with older versions of sfn.
 
 ");
 
