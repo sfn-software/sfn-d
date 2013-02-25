@@ -6,6 +6,8 @@ sfn(1) - send files over network
 `sfn` `--listen` [options] [files to send]<br />
 `sfn` `--connect` &lt;address> [options] [files to send]
 
+`-l` and `-s` are aliases for `--listen`, `-c` is an alias for `--connect`.
+
 ## DESCRIPTION
 
 sfn is an utility to send files over network using direct TCP connection. After launched, sfn establishes a connection, sends all the files from command line (if any), receives all the files from another side and then exits.
