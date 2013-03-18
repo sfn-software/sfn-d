@@ -21,7 +21,7 @@ Requirements:
 * D compiler (dmd is recommended, gdc is officially supported too)
 * make
 
-If you already have all this, just type `make` (or `make dmd`, or `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations [are not supported yet](https://github.com/m1kc/sfn/issues/13)). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
+If you already have all this, just type `make` (or `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations [are not supported yet](https://github.com/m1kc/sfn/issues/13)). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
 If you need to rebuild the manpage (typically you don't), install ronn and run `make man`.
 
@@ -32,10 +32,8 @@ Help
 
 Usage:
 
-```
-sfn --listen [options] [files to send]
-sfn --connect <address> [options] [files to send]
-```
+    sfn --listen [options] [files to send]
+    sfn --connect <address> [options] [files to send]
 
 sfn will establish a connection, send all the files, receive all the files from another side and then exit.
 
