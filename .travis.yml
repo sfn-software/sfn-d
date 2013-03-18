@@ -1,7 +1,7 @@
 language: cpp
 script:
  - make man
- - make dmd
+ - make
  - ./sfn -v
  #- make gdc
  #- ./sfn -v
