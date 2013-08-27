@@ -1,10 +1,4 @@
 language: cpp
-script:
- - make man
- - make
- - ./sfn -v
- #- make gdc
- #- ./sfn -v
 before_install:
  - sudo apt-get update -qq
  - curl -s http://dlang.org/download.html | grep download | grep deb | cut -d'"' -f4 | head -n 2 | xargs wget
@@ -14,3 +8,9 @@ before_install:
  #- sudo apt-get install -qq gdc
  - sudo apt-get install -qq ruby
  - gem install ronn
+script:
+ - make man
+ - make
+ - ./sfn -v
+ #- make gdc
+ #- ./sfn -v
