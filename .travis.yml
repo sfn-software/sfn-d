@@ -1,7 +1,7 @@
 language: cpp
 before_install:
  - sudo apt-get update -qq
- - curl -s http://dlang.org/download.html | grep download | grep deb | cut -d'"' -f4 | head -n 2 | xargs wget
+ - curl -s http://dlang.org/download.html | egrep -o '[^"]*/dmd.2[^"]*deb' | xargs wget
  - sudo apt-get install -qq gcc gcc-multilib libc6 libgcc1 libstdc++6 xdg-utils libc6-dev
  - sudo dpkg -i dmd_*_amd64.deb || sudo dpkg -i dmd_*_i386.deb
  - sudo apt-get -f install -qq
