@@ -9,7 +9,7 @@ before_install:
  - sudo apt-get install -qq ruby
  - gem install ronn
 script:
- - make man
+ - make -B man
  - make
  - ./sfn -v
  #- make gdc
