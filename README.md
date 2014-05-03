@@ -8,8 +8,8 @@ A small and fast utility to send files over network.
 Various notes
 -------------
 
-* If you're running Arch Linux, you can just install package `sfn` from AUR — we keep it pretty fresh.
-* It won't compile with gdc on Ubuntu (Mint, Debian, etc.) because libphobos there is too old. Use [dmd](http://dlang.org/download.html) instead.
+* If you're running Arch Linux, you can install package `sfn` from AUR. However, it's slightly outdated (but I prefer the word "stable").
+* It won't compile with gdc on Ubuntu (Mint, Debian, etc.) because libphobos there is too old.
 
 
 
@@ -18,10 +18,12 @@ Building and running
 
 Requirements:
 
-* D compiler of your choice (dmd, ldc or gdc)
+* D compiler of your choice ([dmd](http://dlang.org/download.html), [ldc](https://github.com/ldc-developers/ldc) or [gdc](http://gdcproject.org/downloads/))
 * make
 
-If you already have all this, just type `make` (or `make ldc`, or `make gdc`) to build sources. `make install` will install sfn to `/usr/bin/` (other destinations [are not supported yet](https://github.com/m1kc/sfn/issues/13)). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
+If you already have all this, just type `make` (or `make ldc`, or `make gdc`) to build sources.
+
+`make install` will install sfn to `/usr/bin/` (other destinations [are not supported yet](https://github.com/m1kc/sfn/issues/13)). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
 If you need to rebuild the manpage (typically you don't), install ronn and run `make man`.
 
