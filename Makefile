@@ -16,6 +16,9 @@ sfn.1: sfn.1.ronn
 gdc: terminal.o sfn.d
 	gdc sfn.d terminal.o -o sfn -O2 -Wall
 
+ldc: terminal.o sfn.d
+	ldc2 sfn.d terminal.o -O2 -of sfn
+
 install:
 	install -D sfn ${DESTDIR}/usr/bin/sfn
 	install -D sfn.1 ${DESTDIR}/usr/share/man/man1/sfn.1
