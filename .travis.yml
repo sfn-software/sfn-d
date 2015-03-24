@@ -1,17 +1,10 @@
-language: cpp
-before_install:
- - sudo apt-get update -qq
- - curl -s http://dlang.org/download.html | egrep -o '[^"]*/dmd.2[^"]*deb' | xargs wget
- - sudo apt-get install -qq gcc gcc-multilib libc6 libgcc1 libstdc++6 xdg-utils libc6-dev
- - sudo dpkg -i dmd_*_amd64.deb || sudo dpkg -i dmd_*_i386.deb
- - sudo apt-get -f install -qq
- #- sudo apt-get install -qq gdc
- - sudo apt-get install -qq ruby
- - gem install ronn
+language: d
+d:
+ - dmd-2.066.1
+ - gdc-4.8.2
+ - ldc-0.14.0
 script:
- - make -B man
- - make
+ - make $DC
  - ./sfn -v
  - PORT=$(( $RANDOM / 2 + 1024 )); echo Testing sfn';' using port $PORT; ./sfn -s -p $PORT -f test-test- & ./sfn -c localhost -p $PORT README.md
- #- make gdc
- #- ./sfn -v
+sudo: false
