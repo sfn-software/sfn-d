@@ -3,12 +3,7 @@ d:
  - dmd-2.066.1
  - gdc-4.8.2
  - ldc-0.14.0
-before_install:
- - sudo apt-get install -qq ruby
- - ruby --version
- - gem install ronn
 script:
- - make -B man
  - make $DC
  - ./sfn -v
  - PORT=$(( $RANDOM / 2 + 1024 )); echo Testing sfn';' using port $PORT; ./sfn -s -p $PORT -f test-test- & ./sfn -c localhost -p $PORT README.md
