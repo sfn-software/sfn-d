@@ -1,13 +1,8 @@
 language: d
 d:
- - dmd
- - gdc
- - ldc
-
-# - dmd-2.066.1
-# - gdc-4.8.2
-# - ldc-0.14.0
- 
+ - dmd-2.066.1
+ - gdc-4.8.2
+ - ldc-0.14.0
 before_install:
  - sudo apt-get install -qq ruby
  - gem install ronn
