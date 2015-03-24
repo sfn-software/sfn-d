@@ -5,6 +5,7 @@ d:
  - ldc-0.14.0
 before_install:
  - sudo apt-get install -qq ruby
+ - ruby --version
  - gem install ronn
 script:
  - make -B man
