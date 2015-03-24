@@ -7,3 +7,4 @@ script:
  - make $DC
  - ./sfn -v
  - PORT=$(( $RANDOM / 2 + 1024 )); echo Testing sfn';' using port $PORT; ./sfn -s -p $PORT -f test-test- & ./sfn -c localhost -p $PORT README.md
+sudo: false
