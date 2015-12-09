@@ -1,0 +1,19 @@
+rule lib
+ command = gcc $in -shared -c -o $out
+
+rule dmd
+ command = dmd $in -of$out -O -w -wi
+
+rule gdc
+ command = gdc $in -o $out -O2 -Wall
+
+rule ldc
+ command = ldc2 $in -O2 -of $out
+
+rule ronn
+ command = ronn -r $in
+
+
+build terminal.o: lib terminal.c
+build sfn: ldc sfn.d terminal.o
+build sfn.1: ronn sfn.1.ronn

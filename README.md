@@ -27,6 +27,7 @@ If you already have all this, just type `make` (or `make ldc`, or `make gdc`) to
 
 If you need to rebuild the manpage (typically you don't), install ronn and run `make man`.
 
+There also is experimental Ninja support. Try `ninja` and `ninja -t clean`.
 
 
 Help

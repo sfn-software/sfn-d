@@ -5,3 +5,5 @@ archlinux/src
 archlinux/pkg
 archlinux/*.src.tar.gz
 archlinux/*.pkg.tar.xz
+
+.ninja_*
