@@ -285,7 +285,7 @@ void sendFiles()
 	foreach(string s; send)
 	{
 		writeln("Sending a file: " ~ s);
-		DirEntry d = dirEntry(s);
+		DirEntry d = DirEntry(s);
 		if (d.isFile())
 		{
 			stream.write( disableMD5 ? FILE : FILE_WITH_MD5 );
