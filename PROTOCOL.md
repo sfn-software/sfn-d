@@ -2,12 +2,12 @@
 
 Binary protocol. General scheme:
 
-`<opcode> <sequence of unknown length>` (repeat many times)
+`<1-byte opcode> <sequence of unknown length>` (repeat many times)
 
 ## Opcodes
 
 * `0x01` FILE
-* `0x02` DONE — signals that no more control bytes will be sent.
+* `0x02` DONE — signals that no more opcodes will be sent.
 * `0x03` MD5_WITH_FILE
 * `0x04` FILE_WITH_MD5
 
