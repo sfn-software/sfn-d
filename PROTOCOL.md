@@ -10,12 +10,12 @@ L1 is the most basic one, L3 has checksum support, L4 has faster checksum suppor
 
 ## Opcodes
 
-Protocol revision|Opcode|Description
------------------|------|-----------
-L1 | `0x01` | FILE
-L1 | `0x02` | DONE — signals that no more opcodes will be sent.
-L3 | `0x03` | MD5_WITH_FILE _(outdated)_
-L4 | `0x04` | FILE_WITH_MD5
+Protocol revision|Opcode|Name|Description
+-----------------|------|----|-----------
+L1 | `0x01` | FILE |
+L1 | `0x02` | DONE | Signals that no more opcodes will be sent.
+L3 | `0x03` | MD5_WITH_FILE | _(outdated)_
+L4 | `0x04` | FILE_WITH_MD5 |
 
 ## FILE
 
