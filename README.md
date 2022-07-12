@@ -1,27 +1,32 @@
 sfn [![Build Status](https://travis-ci.org/m1kc/sfn.svg?branch=master)](https://travis-ci.org/m1kc/sfn)
 ===
 
-A small and fast utility to send files over network.
+Small and simple utility to send files over network.
+
+This is the reference implementation of **sfn L4** protocol.
 
 
-
-Various notes
--------------
-
-* If you're running Arch Linux, you can install package `sfn` from AUR. However, it's slightly outdated (but I prefer the word "stable").
-* It won't compile with gdc on Ubuntu (Mint, Debian, etc.) because libphobos there is too old.
-
-
-
-Building and running
+Building from source
 --------------------
 
 Requirements:
 
-* D compiler of your choice ([dmd](http://dlang.org/download.html), [ldc](https://github.com/ldc-developers/ldc) or [gdc](http://gdcproject.org/downloads/))
-* make
+* D compiler with `std.socketstream` support. One such compiler is gdc 6.3.0 which can be found in Debian 9 (stretch). LDC and DMD are supported if this module is present.
+* GNU make.
 
-If you already have all this, just type `make` (or `make ldc`, or `make gdc`) to build sources.
+Assuming you're preparing Docker build on Debian 9:
+
+```
+sudo docker run --rm -ti -v (pwd):/data debian:stretch bash
+cd /data
+apt update
+apt install make build-essential gdc
+make gdc
+```
+
+<hr />
+
+Type `make` to use DMD (or `make ldc`, or `make gdc`) to build sources.
 
 `make install` will install sfn to `/usr/bin/` (other destinations [are not supported yet](https://github.com/m1kc/sfn/issues/13)). `install` also accepts `DESTDIR` variable allows you to set root folder different from `/` (for example: `make DESTDIR=/tmp/mypkg install`).
 
@@ -57,4 +62,4 @@ Options:
 Related projects
 ----------------
 
-* [siphon](https://github.com/solkin/siphon) &mdash; a bit outdated, but still compatible C implementation
+Take a look at [https://github.com/sfn-software](https://github.com/sfn-software) for alternative implementations in different languages.
