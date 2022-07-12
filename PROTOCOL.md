@@ -8,7 +8,7 @@ Binary protocol. General scheme:
 
 * `0x01` FILE
 * `0x02` DONE — signals that no more opcodes will be sent.
-* `0x03` MD5_WITH_FILE
+* `0x03` MD5_WITH_FILE (deprecated)
 * `0x04` FILE_WITH_MD5
 
 ## FILE
