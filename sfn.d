@@ -50,7 +50,8 @@ immutable uint windowSize = 1024*64;
 
 immutable ubyte FILE = 0x01;
 immutable ubyte DONE = 0x02;
-immutable ubyte FILE_WITH_MD5 = 0x03;
+immutable ubyte MD5_WITH_FILE = 0x03;
+immutable ubyte FILE_WITH_MD5 = 0x04;
 
 //version = TestBarAndExit;
 //version = TestNumbersAndExit;
@@ -218,7 +219,7 @@ void receiveFiles()
 			remoteDone = true;
 			return;
 		}
-		else if (b == FILE_WITH_MD5 || b == FILE)
+		else if (b == FILE_WITH_MD5 || b == MD5_WITH_FILE || b == FILE)
 		{
 			write("Receiving a file: ");
 			string filename = to!string(stream.readLine());
@@ -227,7 +228,7 @@ void receiveFiles()
 			stream.read(size);
 			writeln(size, " bytes");
 			string md5str = null;
-			if (b == FILE_WITH_MD5)
+			if (b == MD5_WITH_FILE)
 			{
 				write("md5: ");
 				md5str = to!string(stream.readLine());
@@ -252,6 +253,13 @@ void receiveFiles()
 			f.close();
 
 			if (b == FILE_WITH_MD5)
+			{
+				write("md5: ");
+				md5str = to!string(stream.readLine());
+				writeln(md5str);
+			}
+
+			if (b == FILE_WITH_MD5 || b == MD5_WITH_FILE)
 			{
 				writeln("Checking integrity...");
 
@@ -294,37 +302,36 @@ void sendFiles()
 			stream.writeString("\n");
 			stream.write(f.size());
 			writeln(to!string(f.size()) ~ " bytes");
-			if (!disableMD5)
-			{
-				write("md5: ");
-				MD5 md5;
-				md5.start();
-				foreach (ubyte[] b; f.byChunk(256*1024))
-				{
-					md5.put(b);
-				}
-				string md5str = toHexString(md5.finish());
-				md5str = md5str.toLower();
-				writeln(md5str);
-				stream.writeString(md5str);
-				stream.writeString("\n");
-				f.seek(0);
-			}
-			else
-			{
-				writeln("Notice: integrity check is disabled.");
-			}
+
+			MD5 md5;
+			md5.start();
 
 			ulong size = f.size();
 			ulong sent = 0;
 			long time = currentTime();
 			foreach (ubyte[] b; f.byChunk(windowSize))
 			{
+				md5.put(b);
 				stream.write(b);
 				sent += b.length;
 				showBar(sent, size, time);
 			}
 			writeln();
+
+			if (!disableMD5)
+			{
+				write("md5: ");
+				string md5str = toHexString(md5.finish());
+				md5str = md5str.toLower();
+				writeln(md5str);
+				stream.writeString(md5str);
+				stream.writeString("\n");
+			}
+			else
+			{
+				writeln("Notice: integrity check is disabled.");
+			}
+
 			writeln("Done.");
 			f.close();
 		}
@@ -348,8 +355,8 @@ void extIP()
 	SocketStream ss = new SocketStream(sock);
 
 	ss.writeString(
-		"GET /services/simple/getip.php HTTP/1.0\r\n"
-		"Host: tomclaw.com\r\n"
+		"GET /services/simple/getip.php HTTP/1.0\r\n" ~
+		"Host: tomclaw.com\r\n" ~
 		"\r\n"
 	);
 
